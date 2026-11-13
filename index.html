@@ -1,27 +1,27 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Tic-Tac-Toe</title>
+    <title>Cyber Hub & Games</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: rgba(22, 27, 34, 0.7);
+            --bg-color: #0b0f19;
+            --card-bg: rgba(18, 24, 38, 0.75);
             --accent-x: #00f2fe;
             --accent-o: #ff0844;
+            --accent-crypto: #00ff87;
             --text-main: #f0f6fc;
             --text-muted: #8b949e;
-            --btn-bg: linear-gradient(135deg, #654ea3, #eaafc8);
-            --border-glow: rgba(0, 242, 254, 0.3);
+            --border-glow: rgba(0, 242, 254, 0.2);
         }
 
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(101, 78, 163, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 8, 68, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 8, 68, 0.08) 0%, transparent 40%);
             color: var(--text-main);
             margin: 0;
             padding: 0;
@@ -61,13 +61,24 @@
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 20px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: auto;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen.active {
+            display: flex;
         }
 
         .app-header {
@@ -78,164 +89,428 @@
         .app-header h1 {
             font-size: 1.8rem;
             margin: 0;
-            background: linear-gradient(135deg, var(--accent-x), var(--accent-o));
+            background: linear-gradient(135deg, var(--accent-x), var(--accent-crypto));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            letter-spacing: -0.5px;
         }
 
         .app-header p {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin: 5px 0 0 0;
         }
 
-        .game-card {
+        /* Головне меню */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .menu-card-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+
+        .menu-card-btn:hover {
+            border-color: var(--accent-x);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.15);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 14px;
+        }
+
+        /* Картки гри та біржі */
+        .card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            padding: 24px;
+            padding: 20px;
             width: 100%;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(20px);
             box-sizing: border-box;
+            margin-bottom: 15px;
         }
 
-        .mode-selector {
+        /* Логотип валюти Айбек */
+        .aibek-logo-container {
             display: flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
-        .mode-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 8px;
+        .aibek-badge {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00ff87, #60efff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: #0b0f19;
+            box-shadow: 0 0 20px rgba(0, 255, 135, 0.4);
+        }
+
+        .aibek-price-box {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-crypto);
+            margin-bottom: 10px;
+        }
+
+        .aibek-stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 10px;
+            padding-right: 5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
             border-radius: 8px;
             font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .mode-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        /* Таблиця валют */
+        .currency-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .currency-table th, .currency-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .currency-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Ставки на курс */
+        .bet-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .bet-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .bet-up { background: rgba(0, 255, 135, 0.2); color: #00ff87; border: 1px solid #00ff87; }
+        .bet-down { background: rgba(255, 8, 68, 0.2); color: #ff0844; border: 1px solid #ff0844; }
+        .bet-btn:active { transform: scale(0.96); }
+
+        /* Налаштування Хрестиків-нуликів */
+        .selectors-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .sel-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sel-btn.active {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--accent-x);
+            border-color: var(--accent-x);
         }
 
         #status {
             text-align: center;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            font-weight: 500;
-            color: var(--text-main);
-            letter-spacing: 0.3px;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            font-weight: 600;
         }
 
+        /* Ідеально рівне квадратне поле */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            aspect-ratio: 1;
-            margin-bottom: 24px;
+            gap: 10px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            margin-bottom: 15px;
         }
 
         .cell {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s;
+            aspect-ratio: 1 / 1;
         }
 
         .cell:hover {
             background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: scale(0.98);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .cell.x {
-            color: var(--accent-x);
-            text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-
-        .cell.o {
-            color: var(--accent-o);
-            text-shadow: 0 0 15px rgba(255, 8, 68, 0.4);
-        }
+        .cell.x { color: var(--accent-x); text-shadow: 0 0 12px rgba(0, 242, 254, 0.4); }
+        .cell.o { color: var(--accent-o); text-shadow: 0 0 12px rgba(255, 8, 68, 0.4); }
 
         .action-btn {
             width: 100%;
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #0d1117;
+            background: linear-gradient(135deg, var(--accent-x) 0%, #4facfe 100%);
+            color: #0b0f19;
             border: none;
-            padding: 14px;
-            font-size: 1rem;
+            padding: 12px;
+            font-size: 0.95rem;
             font-weight: 700;
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.2);
+            transition: 0.2s;
         }
 
-        .action-btn:active {
-            transform: scale(0.97);
-        }
+        .action-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
-    <!-- Кнопка повернення внизу зліва -->
-    <a href="javascript:history.back()" class="back-menu-btn">
+    <!-- Кнопка повернення в меню (зліва знизу) -->
+    <a href="#" onclick="showScreen('menuScreen'); return false;" class="back-menu-btn" id="backBtn" style="display: none;">
         <span>←</span> Меню
     </a>
 
     <div class="container">
-        <div class="app-header">
-            <h1>Popular Games</h1>
-            <p>Next-Gen Mini App</p>
+        
+        <!-- ЕКРАН 1: Головне меню -->
+        <div id="menuScreen" class="screen active">
+            <div class="app-header">
+                <h1>Cyber Hub</h1>
+                <p>Оберіть розділ для занурення</p>
+            </div>
+            <div class="menu-grid">
+                <button class="menu-card-btn" onclick="showScreen('gameScreen')">
+                    <div class="menu-icon">❌</div>
+                    <div>
+                        <div>Хрестики-нулики</div>
+                        <small style="color: var(--text-muted); font-weight: normal;">Гра проти розумного ШІ</small>
+                    </div>
+                </button>
+                <button class="menu-card-btn" onclick="showScreen('cryptoScreen')">
+                    <div class="menu-icon">💠</div>
+                    <div>
+                        <div>Валюта Айбек (AJ)</div>
+                        <small style="color: var(--text-muted); font-weight: normal;">Курс, статистика та ставки</small>
+                    </div>
+                </button>
+            </div>
         </div>
 
-        <div class="game-card">
-            <div class="mode-selector">
-                <button class="mode-btn active" id="aiModeBtn" onclick="setGameMode('ai')">Проти ШІ 🤖</button>
-                <button class="mode-btn" id="pvpModeBtn" onclick="setGameMode('pvp')">Вдвох 👥</button>
+        <!-- ЕКРАН 2: Хрестики-нулики -->
+        <div id="gameScreen" class="screen">
+            <div class="app-header">
+                <h1>Tic-Tac-Toe</h1>
+                <p>Next-Gen Arena</p>
             </div>
 
-            <div id="status">Хід гравця: X</div>
-            
-            <div class="board" id="board">
-                <button class="cell" onclick="makeMove(0)"></button>
-                <button class="cell" onclick="makeMove(1)"></button>
-                <button class="cell" onclick="makeMove(2)"></button>
-                <button class="cell" onclick="makeMove(3)"></button>
-                <button class="cell" onclick="makeMove(4)"></button>
-                <button class="cell" onclick="makeMove(5)"></button>
-                <button class="cell" onclick="makeMove(6)"></button>
-                <button class="cell" onclick="makeMove(7)"></button>
-                <button class="cell" onclick="makeMove(8)"></button>
-            </div>
+            <div class="card">
+                <div class="selectors-row">
+                    <button class="sel-btn active" id="diffEasy" onclick="setDifficulty('easy')">Легкий</button>
+                    <button class="sel-btn" id="diffMedium" onclick="setDifficulty('medium')">Середній</button>
+                    <button class="sel-btn" id="diffMaster" onclick="setDifficulty('master')">Майстер 🤖</button>
+                </div>
 
-            <button class="action-btn" onclick="resetGame()">Нова гра</button>
+                <div id="status">Хід гравця: X</div>
+                
+                <div class="board" id="board">
+                    <button class="cell" onclick="makeMove(0)"></button>
+                    <button class="cell" onclick="makeMove(1)"></button>
+                    <button class="cell" onclick="makeMove(2)"></button>
+                    <button class="cell" onclick="makeMove(3)"></button>
+                    <button class="cell" onclick="makeMove(4)"></button>
+                    <button class="cell" onclick="makeMove(5)"></button>
+                    <button class="cell" onclick="makeMove(6)"></button>
+                    <button class="cell" onclick="makeMove(7)"></button>
+                    <button class="cell" onclick="makeMove(8)"></button>
+                </div>
+
+                <button class="action-btn" onclick="resetGame()">Нова гра</button>
+            </div>
         </div>
+
+        <!-- ЕКРАН 3: Валюта Айбек (AJ) та Ставки -->
+        <div id="cryptoScreen" class="screen">
+            <div class="app-header">
+                <h1>Aibek Market</h1>
+                <p>Децентралізована валюта AJ</p>
+            </div>
+
+            <div class="card">
+                <div class="aibek-logo-container">
+                    <div class="aibek-badge">₳</div>
+                    <div style="font-weight: 800; font-size: 1.2rem;">Айбек (AJ)</div>
+                </div>
+                
+                <div class="aibek-price-box" id="aibekPrice">$1 USD = 3.77 AJ</div>
+                <div style="text-align: center; font-size: 0.8rem; color: var(--accent-crypto); margin-bottom: 15px;" id="aibekTrend">▲ Актуальний курс оновлюється</div>
+
+                <!-- Ставки на курс -->
+                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">Прогноз курсу на 10 сек:</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Виграш: 1.1x | Поразка: повернення 0.7x</div>
+                <div class="bet-box">
+                    <button class="bet-btn bet-up" onclick="placeBet('up')">📈 Виросте</button>
+                    <button class="bet-btn bet-down" onclick="placeBet('down')">📉 Впаде</button>
+                </div>
+                <div id="betResult" style="text-align: center; font-size: 0.85rem; margin-top: 8px; font-weight: 600;"></div>
+            </div>
+
+            <div class="card">
+                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">Курс в інших валютах:</div>
+                <table class="currency-table">
+                    <tr><th>Валюта</th><th>За 1 USD</th><th>За 1 AJ</th></tr>
+                    <tr><td>Євро (EUR)</td><td>0.92 €</td><td>0.24 €</td></tr>
+                    <tr><td>Гривня (UAH)</td><td>41.20 ₴</td><td>10.92 ₴</td></tr>
+                    <tr><td>Фунт (GBP)</td><td>0.78 £</td><td>0.21 £</td></tr>
+                    <tr><td>Єна (JPY)</td><td>154.2 ¥</td><td>40.9 ¥</td></tr>
+                    <tr><td>Канад. долар (CAD)</td><td>1.38 $</td><td>0.36 $</td></tr>
+                    <tr><td>Австр. долар (AUD)</td><td>1.52 $</td><td>0.40 $</td></tr>
+                    <tr><td>Шв. франк (CHF)</td><td>0.89 CHF</td><td>0.23 CHF</td></tr>
+                    <tr><td>Злотий (PLN)</td><td>4.02 zł</td><td>1.06 zł</td></tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">Архів статистики курсу AJ:</div>
+                <div class="aibek-stats-list" id="statsList">
+                    <!-- Заповнюється скриптом -->
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
+        // Перемикання екранів
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('backBtn').style.display = screenId === 'menuScreen' ? 'none' : 'flex';
+        }
+
+        // --- ЛОГІКА АЙБЕКА ТА БІРЖІ ---
+        let currentAibekRate = 3.77;
+        
+        function updateAibekEconomy() {
+            // Випадкова зміна курсу (росте або падає непомітно для користувача)
+            const delta = (Math.random() * 0.08 - 0.035);
+            currentAibekRate = Math.max(3.0, Number((currentAibekRate + delta).toFixed(2)));
+            document.getElementById('aibekPrice').innerText = `$1 USD = ${currentAibekRate} AJ`;
+            
+            const trendEl = document.getElementById('aibekTrend');
+            if (delta >= 0) {
+                trendEl.innerText = "▲ Курс стабільно зростає";
+                trendEl.style.color = "#00ff87";
+            } else {
+                trendEl.innerText = "▼ Легке коливання ринку";
+                trendEl.style.color = "#ff0844";
+            }
+        }
+        setInterval(updateAibekEconomy, 7000);
+
+        // Генерація історичної статистики за попередні дні
+        function loadStats() {
+            const statsList = document.getElementById('statsList');
+            const daysAgo = ["Вчора", "2 дні тому", "3 дні тому", "Минулий тиждень", "10 днів тому", "2 тижні тому"];
+            let html = "";
+            let baseRate = 3.50;
+            daysAgo.forEach((day, index) => {
+                baseRate += (Math.sin(index) * 0.15 + 0.05);
+                let rate = baseRate.toFixed(2);
+                html += `<div class="stat-row"><span>${day}</span><span style="font-weight:700; color:var(--accent-crypto)">$1 = ${rate} AJ</span></div>`;
+            });
+            statsList.innerHTML = html;
+        }
+        loadStats();
+
+        // Ставки на курс
+        function placeBet(direction) {
+            const resEl = document.getElementById('betResult');
+            resEl.style.color = "var(--text-main)";
+            resEl.innerText = "⏳ Ставку прийнято. Аналіз ринку через 5 сек...";
+            
+            const startRate = currentAibekRate;
+            setTimeout(() => {
+                const endRate = currentAibekRate;
+                const isUp = endRate > startRate;
+                const won = (direction === 'up' && isUp) || (direction === 'down' && !isUp);
+
+                if (won) {
+                    resEl.style.color = "#00ff87";
+                    resEl.innerText = "🎉 Перемога! Виграш 1.1x ставки!";
+                } else {
+                    resEl.style.color = "#ff0844";
+                    resEl.innerText = "❌ Рівень змінився інакше. Виплата 0.7x ставки.";
+                }
+            }, 5000);
+        }
+
+        // --- ЛОГІКА ХРЕСТИКІВ-НУЛИКІВ ---
         let board = ["", "", "", "", "", "", "", "", ""];
         let currentPlayer = "X";
         let isGameActive = true;
-        let gameMode = "ai"; // 'ai' або 'pvp'
+        let difficulty = "easy"; // 'easy', 'medium', 'master'
         const statusDisplay = document.getElementById("status");
 
         const winningConditions = [
@@ -244,10 +519,10 @@
             [0, 4, 8], [2, 4, 6]
         ];
 
-        function setGameMode(mode) {
-            gameMode = mode;
-            document.getElementById("aiModeBtn").classList.toggle("active", mode === "ai");
-            document.getElementById("pvpModeBtn").classList.toggle("active", mode === "pvp");
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('diff' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('active');
             resetGame();
         }
 
@@ -274,51 +549,118 @@
             currentPlayer = currentPlayer === "X" ? "O" : "X";
             statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
 
-            // Якщо режим ШІ і зараз хід комп'ютера ('O')
-            if (gameMode === "ai" && currentPlayer === "O" && isGameActive) {
+            if (currentPlayer === "O" && isGameActive) {
                 setTimeout(makeAiMove, 400);
             }
         }
 
+        // Рівні ШІ
         function makeAiMove() {
             if (!isGameActive) return;
-            
-            // Знаходимо всі порожні клітинки
-            let emptyCells = [];
+            let moveIndex;
+
+            if (difficulty === 'easy') {
+                moveIndex = getRandomMove();
+            } else if (difficulty === 'medium') {
+                moveIndex = getMediumMove();
+            } else {
+                moveIndex = getBestAiMove(); // Майстер (Minimax)
+            }
+
+            if (moveIndex !== undefined && board[moveIndex] === "") {
+                board[moveIndex] = "O";
+                let cell = document.getElementsByClassName("cell")[moveIndex];
+                cell.innerText = "O";
+                cell.classList.add("o");
+
+                if (checkWin("O")) {
+                    statusDisplay.innerText = "ШІ переміг! 🤖";
+                    isGameActive = false;
+                    return;
+                }
+
+                if (!board.includes("")) {
+                    statusDisplay.innerText = "Нічия! 🤝";
+                    isGameActive = false;
+                    return;
+                }
+
+                currentPlayer = "X";
+                statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
+            }
+        }
+
+        function getRandomMove() {
+            let empty = [];
+            board.forEach((val, idx) => { if(val === "") empty.push(idx); });
+            return empty[Math.floor(Math.random() * empty.length)];
+        }
+
+        function getMediumMove() {
+            // Блокує гравця або робить випадковий хід
+            for (let cond of winningConditions) {
+                let [a, b, c] = cond;
+                if (board[a] === 'X' && board[b] === 'X' && board[c] === '') return c;
+                if (board[a] === 'X' && board[c] === 'X' && board[b] === '') return b;
+                if (board[b] === 'X' && board[c] === 'X' && board[a] === '') return a;
+            }
+            return getRandomMove();
+        }
+
+        // Непереможний ШІ (Алгоритм Мінімакс для рівня Майстер)
+        function getBestAiMove() {
+            let bestScore = -Infinity;
+            let bestMove;
             for (let i = 0; i < board.length; i++) {
-                if (board[i] === "") emptyCells.push(i);
+                if (board[i] === "") {
+                    board[i] = "O";
+                    let score = minimax(board, 0, false);
+                    board[i] = "";
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                }
             }
+            return bestMove;
+        }
 
-            if (emptyCells.length === 0) return;
+        function minimax(newBoard, depth, isMaximizing) {
+            if (checkWinForMini(newBoard, "O")) return 10 - depth;
+            if (checkWinForMini(newBoard, "X")) return depth - 10;
+            if (!newBoard.includes("")) return 0;
 
-            // ШІ робить розумний хід (рандомний серед вільних)
-            let randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            
-            board[randomIndex] = "O";
-            let cell = document.getElementsByClassName("cell")[randomIndex];
-            cell.innerText = "O";
-            cell.classList.add("o");
-
-            if (checkWin("O")) {
-                statusDisplay.innerText = "ШІ переміг! 🤖";
-                isGameActive = false;
-                return;
+            if (isMaximizing) {
+                let maxScore = -Infinity;
+                for (let i = 0; i < newBoard.length; i++) {
+                    if (newBoard[i] === "") {
+                        newBoard[i] = "O";
+                        let score = minimax(newBoard, depth + 1, false);
+                        newBoard[i] = "";
+                        maxScore = Math.max(score, maxScore);
+                    }
+                }
+                return maxScore;
+            } else {
+                let minScore = Infinity;
+                for (let i = 0; i < newBoard.length; i++) {
+                    if (newBoard[i] === "") {
+                        newBoard[i] = "X";
+                        let score = minimax(newBoard, depth + 1, true);
+                        newBoard[i] = "";
+                        minScore = Math.min(score, minScore);
+                    }
+                }
+                return minScore;
             }
-
-            if (!board.includes("")) {
-                statusDisplay.innerText = "Нічия! 🤝";
-                isGameActive = false;
-                return;
-            }
-
-            currentPlayer = "X";
-            statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
         }
 
         function checkWin(player) {
-            return winningConditions.some(condition => {
-                return condition.every(index => board[index] === player);
-            });
+            return winningConditions.some(cond => cond.every(idx => board[idx] === player));
+        }
+
+        function checkWinForMini(b, player) {
+            return winningConditions.some(cond => cond.every(idx => b[idx] === player));
         }
 
         function resetGame() {
