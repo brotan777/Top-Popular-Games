@@ -1,13 +1,13 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Hub & Games</title>
+    <title>Cyber Hub & Aibek Economy</title>
     <style>
         :root {
             --bg-color: #0b0f19;
-            --card-bg: rgba(18, 24, 38, 0.75);
+            --card-bg: rgba(18, 24, 38, 0.8);
             --accent-x: #00f2fe;
             --accent-o: #ff0844;
             --accent-crypto: #00ff87;
@@ -32,7 +32,6 @@
             align-items: center;
         }
 
-        /* Кнопка повернення зліва знизу */
         .back-menu-btn {
             position: fixed;
             bottom: 20px;
@@ -101,7 +100,6 @@
             margin: 5px 0 0 0;
         }
 
-        /* Головне меню */
         .menu-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -140,7 +138,6 @@
             border-radius: 14px;
         }
 
-        /* Картки гри та біржі */
         .card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -153,7 +150,23 @@
             margin-bottom: 15px;
         }
 
-        /* Логотип валюти Айбек */
+        /* Гаманець */
+        .wallet-banner {
+            background: linear-gradient(135deg, rgba(0,255,135,0.15), rgba(0,242,254,0.15));
+            border: 1px solid var(--accent-crypto);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .wallet-balance {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-crypto);
+            margin-top: 5px;
+        }
+
         .aibek-logo-container {
             display: flex;
             align-items: center;
@@ -178,73 +191,68 @@
 
         .aibek-price-box {
             text-align: center;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--accent-crypto);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
-        .aibek-stats-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 180px;
-            overflow-y: auto;
-            margin-top: 10px;
-            padding-right: 5px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(255,255,255,0.03);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-
-        /* Таблиця валют */
-        .currency-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        .currency-table th, .currency-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .currency-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* Ставки на курс */
+        /* Ставки */
         .bet-box {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .bet-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 10px;
+            border-radius: 10px;
             border: none;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: 0.2s;
         }
 
         .bet-up { background: rgba(0, 255, 135, 0.2); color: #00ff87; border: 1px solid #00ff87; }
         .bet-down { background: rgba(255, 8, 68, 0.2); color: #ff0844; border: 1px solid #ff0844; }
-        .bet-btn:active { transform: scale(0.96); }
+        .bet-stay { background: rgba(255, 204, 0, 0.2); color: #ffcc00; border: 1px solid #ffcc00; grid-column: span 2; }
+        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Налаштування Хрестиків-нуликів */
+        /* Калькулятор */
+        .calc-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-top: 8px;
+            outline: none;
+        }
+
+        .calc-result {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Реферали */
+        .ref-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+            border: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        /* Хрестики-нулики */
         .selectors-row {
             display: flex;
             gap: 8px;
@@ -277,7 +285,6 @@
             font-weight: 600;
         }
 
-        /* Ідеально рівне квадратне поле */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -303,7 +310,6 @@
 
         .cell:hover {
             background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .cell.x { color: var(--accent-x); text-shadow: 0 0 12px rgba(0, 242, 254, 0.4); }
@@ -319,27 +325,29 @@
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s;
         }
-
-        .action-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
-    <!-- Кнопка повернення в меню (зліва знизу) -->
     <a href="#" onclick="showScreen('menuScreen'); return false;" class="back-menu-btn" id="backBtn" style="display: none;">
         <span>←</span> Меню
     </a>
 
     <div class="container">
         
-        <!-- ЕКРАН 1: Головне меню -->
+        <!-- ГОЛОВНЕ МЕНЮ -->
         <div id="menuScreen" class="screen active">
             <div class="app-header">
                 <h1>Cyber Hub</h1>
-                <p>Оберіть розділ для занурення</p>
+                <p>Ігрова та фінансова екосистема</p>
             </div>
+            
+            <div class="wallet-banner">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Ваш гаманець:</div>
+                <div class="wallet-balance" id="mainWalletBalance">500 AJ</div>
+            </div>
+
             <div class="menu-grid">
                 <button class="menu-card-btn" onclick="showScreen('gameScreen')">
                     <div class="menu-icon">❌</div>
@@ -351,18 +359,25 @@
                 <button class="menu-card-btn" onclick="showScreen('cryptoScreen')">
                     <div class="menu-icon">💠</div>
                     <div>
-                        <div>Валюта Айбек (AJ)</div>
-                        <small style="color: var(--text-muted); font-weight: normal;">Курс, статистика та ставки</small>
+                        <div>Валюта Айбек & Гаманець</div>
+                        <small style="color: var(--text-muted); font-weight: normal;">Курс, ставки та калькулятор</small>
+                    </div>
+                </button>
+                <button class="menu-card-btn" onclick="showScreen('refScreen')">
+                    <div class="menu-icon">🤝</div>
+                    <div>
+                        <div>Реферальна система</div>
+                        <small style="color: var(--text-muted); font-weight: normal;">Запроси друга та отримай AJ</small>
                     </div>
                 </button>
             </div>
         </div>
 
-        <!-- ЕКРАН 2: Хрестики-нулики -->
+        <!-- ХРЕСТИКИ-НУЛИКИ -->
         <div id="gameScreen" class="screen">
             <div class="app-header">
                 <h1>Tic-Tac-Toe</h1>
-                <p>Next-Gen Arena</p>
+                <p>Арена ШІ з точними шансами</p>
             </div>
 
             <div class="card">
@@ -390,11 +405,16 @@
             </div>
         </div>
 
-        <!-- ЕКРАН 3: Валюта Айбек (AJ) та Ставки -->
+        <!-- БІРЖА ТА КАЛЬКУЛЯТОР -->
         <div id="cryptoScreen" class="screen">
             <div class="app-header">
                 <h1>Aibek Market</h1>
-                <p>Децентралізована валюта AJ</p>
+                <p>Фінансовий термінал</p>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-crypto);">
+                <div style="font-size: 0.9rem; font-weight: 700; margin-bottom: 5px;">💳 Ваш гаманець:</div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-crypto);" id="cryptoWalletBalance">500 AJ</div>
             </div>
 
             <div class="card">
@@ -403,114 +423,215 @@
                     <div style="font-weight: 800; font-size: 1.2rem;">Айбек (AJ)</div>
                 </div>
                 
-                <div class="aibek-price-box" id="aibekPrice">$1 USD = 3.77 AJ</div>
-                <div style="text-align: center; font-size: 0.8rem; color: var(--accent-crypto); margin-bottom: 15px;" id="aibekTrend">▲ Актуальний курс оновлюється</div>
+                <div class="aibek-price-box" id="aibekPrice">1 USDT = 3.77 AJ</div>
+                <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;" id="aibekTrend">💤 Курс стабільний</div>
 
-                <!-- Ставки на курс -->
-                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">Прогноз курсу на 10 сек:</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">Виграш: 1.1x | Поразка: повернення 0.7x</div>
+                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">Ставка на курс (1 раз на хвилину):</div>
                 <div class="bet-box">
-                    <button class="bet-btn bet-up" onclick="placeBet('up')">📈 Виросте</button>
-                    <button class="bet-btn bet-down" onclick="placeBet('down')">📉 Впаде</button>
+                    <button class="bet-btn bet-up" id="btnUp" onclick="placeBet('up')">📈 Виросте</button>
+                    <button class="bet-btn bet-down" id="btnDown" onclick="placeBet('down')">📉 Впаде</button>
+                    <button class="bet-btn bet-stay" id="btnStay" onclick="placeBet('stay')">⏸️ Залишиться</button>
                 </div>
+                <div id="betTimer" style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;"></div>
                 <div id="betResult" style="text-align: center; font-size: 0.85rem; margin-top: 8px; font-weight: 600;"></div>
             </div>
 
+            <!-- Калькулятор -->
             <div class="card">
-                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">Курс в інших валютах:</div>
-                <table class="currency-table">
-                    <tr><th>Валюта</th><th>За 1 USD</th><th>За 1 AJ</th></tr>
-                    <tr><td>Євро (EUR)</td><td>0.92 €</td><td>0.24 €</td></tr>
-                    <tr><td>Гривня (UAH)</td><td>41.20 ₴</td><td>10.92 ₴</td></tr>
-                    <tr><td>Фунт (GBP)</td><td>0.78 £</td><td>0.21 £</td></tr>
-                    <tr><td>Єна (JPY)</td><td>154.2 ¥</td><td>40.9 ¥</td></tr>
-                    <tr><td>Канад. долар (CAD)</td><td>1.38 $</td><td>0.36 $</td></tr>
-                    <tr><td>Австр. долар (AUD)</td><td>1.52 $</td><td>0.40 $</td></tr>
-                    <tr><td>Шв. франк (CHF)</td><td>0.89 CHF</td><td>0.23 CHF</td></tr>
-                    <tr><td>Злотий (PLN)</td><td>4.02 zł</td><td>1.06 zł</td></tr>
-                </table>
-            </div>
-
-            <div class="card">
-                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">Архів статистики курсу AJ:</div>
-                <div class="aibek-stats-list" id="statsList">
+                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">🧮 Калькулятор валют:</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Введіть кількість AJ для конвертації:</div>
+                <input type="number" id="calcInput" class="calc-input" value="100" oninput="calculateCurrency()">
+                <div class="calc-result" id="calcResult">
                     <!-- Заповнюється скриптом -->
                 </div>
+            </div>
+        </div>
+
+        <!-- РЕФЕРАЛЬНА СИСТЕМА -->
+        <div id="refScreen" class="screen">
+            <div class="app-header">
+                <h1>Реферали</h1>
+                <p>Запрошуй друзів та заробляй</p>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">🎁 Бонуси за друзів</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                    За кожного запрошеного друга ти отримуєш <b>300 AJ</b>, а друг отримує бонус <b>150 AJ</b> до своїх початкових 500 AJ!<br>Посилання активне 1 раз назавжди.
+                </p>
+                <div class="ref-box" id="refLinkBox">https://t.me/Topinteresgames_bot?start=ref_12345</div>
+                <button class="action-btn" onclick="copyRefLink()">Скопіювати посилання</button>
+                <div id="refNotification" style="font-size: 0.8rem; color: var(--accent-crypto); margin-top: 8px;"></div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Перемикання екранів
+        // --- ІНІЦІАЛІЗАЦІЯ БАЛАНСУ ---
+        let balance = localStorage.getItem('aibek_balance');
+        if (balance === null) {
+            balance = 500; // Початковий баланс новичка
+            localStorage.setItem('aibek_balance', balance);
+        } else {
+            balance = Number(balance);
+        }
+
+        // Перевірка реферального посилання 1 раз назавжди
+        const urlParams = new URLSearchParams(window.location.search);
+        const refParam = urlParams.get('ref');
+        if (refParam && !localStorage.getItem('ref_claimed')) {
+            balance += 150; // Бонус тому, хто перейшов
+            localStorage.setItem('aibek_balance', balance);
+            localStorage.setItem('ref_claimed', 'true');
+            alert('Вітаємо! Використано реферальне посилання. Вам нараховано бонус +150 AJ!');
+        }
+
+        function updateWallets() {
+            document.getElementById('mainWalletBalance').innerText = balance + " AJ";
+            document.getElementById('cryptoWalletBalance').innerText = balance + " AJ";
+            localStorage.setItem('aibek_balance', balance);
+            calculateCurrency();
+        }
+        updateWallets();
+
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             document.getElementById('backBtn').style.display = screenId === 'menuScreen' ? 'none' : 'flex';
         }
 
-        // --- ЛОГІКА АЙБЕКА ТА БІРЖІ ---
-        let currentAibekRate = 3.77;
-        
+        // --- ЕКОНОМІКА АЙБЕКА (СТАБІЛЬНИЙ КУРС З РІДКІСНИМИ КОЛИВАННЯМИ) ---
+        let currentRate = 3.77;
+        let lastBetTime = 0;
+
         function updateAibekEconomy() {
-            // Випадкова зміна курсу (росте або падає непомітно для користувача)
-            const delta = (Math.random() * 0.08 - 0.035);
-            currentAibekRate = Math.max(3.0, Number((currentAibekRate + delta).toFixed(2)));
-            document.getElementById('aibekPrice').innerText = `$1 USD = ${currentAibekRate} AJ`;
-            
-            const trendEl = document.getElementById('aibekTrend');
-            if (delta >= 0) {
-                trendEl.innerText = "▲ Курс стабільно зростає";
-                trendEl.style.color = "#00ff87";
+            // Курс більшу частину часу тримається на місці, коливається лише іноді (у 30% випадків)
+            if (Math.random() < 0.3) {
+                const delta = (Math.random() * 0.04 - 0.02);
+                currentRate = Math.max(3.0, Number((currentRate + delta).toFixed(2)));
+                document.getElementById('aibekPrice').innerText = `1 USDT = ${currentRate} AJ`;
+                
+                const trendEl = document.getElementById('aibekTrend');
+                if (delta > 0) {
+                    trendEl.innerText = "📈 Курс трохи піднявся";
+                    trendEl.style.color = "#00ff87";
+                } else if (delta < 0) {
+                    trendEl.innerText = "📉 Курс трохи просів";
+                    trendEl.style.color = "#ff0844";
+                }
             } else {
-                trendEl.innerText = "▼ Легке коливання ринку";
-                trendEl.style.color = "#ff0844";
+                document.getElementById('aibekTrend').innerText = "💤 Курс стабільний на місці";
+                document.getElementById('aibekTrend').style.color = "var(--text-muted)";
             }
         }
-        setInterval(updateAibekEconomy, 7000);
+        setInterval(updateAibekEconomy, 8000);
 
-        // Генерація історичної статистики за попередні дні
-        function loadStats() {
-            const statsList = document.getElementById('statsList');
-            const daysAgo = ["Вчора", "2 дні тому", "3 дні тому", "Минулий тиждень", "10 днів тому", "2 тижні тому"];
-            let html = "";
-            let baseRate = 3.50;
-            daysAgo.forEach((day, index) => {
-                baseRate += (Math.sin(index) * 0.15 + 0.05);
-                let rate = baseRate.toFixed(2);
-                html += `<div class="stat-row"><span>${day}</span><span style="font-weight:700; color:var(--accent-crypto)">$1 = ${rate} AJ</span></div>`;
-            });
-            statsList.innerHTML = html;
-        }
-        loadStats();
-
-        // Ставки на курс
+        // Ставки (1 раз на хвилину)
         function placeBet(direction) {
-            const resEl = document.getElementById('betResult');
-            resEl.style.color = "var(--text-main)";
-            resEl.innerText = "⏳ Ставку прийнято. Аналіз ринку через 5 сек...";
-            
-            const startRate = currentAibekRate;
-            setTimeout(() => {
-                const endRate = currentAibekRate;
-                const isUp = endRate > startRate;
-                const won = (direction === 'up' && isUp) || (direction === 'down' && !isUp);
+            const now = Date.now();
+            if (now - lastBetTime < 60000) {
+                const leftSec = Math.ceil((60000 - (now - lastBetTime)) / 1000);
+                alert(`Ставити можна лише 1 раз на хвилину! Зачекайте ще ${leftSec} сек.`);
+                return;
+            }
 
-                if (won) {
+            if (balance < 50) {
+                alert("Недостатньо AJ для ставки!");
+                return;
+            }
+
+            balance -= 50; // Ставка 50 AJ
+            updateWallets();
+            lastBetTime = now;
+
+            const resEl = document.getElementById('betResult');
+            const timerEl = document.getElementById('betTimer');
+            resEl.style.color = "var(--text-main)";
+            resEl.innerText = "⏳ Ставку 50 AJ прийнято. Фіксація через 10 сек...";
+
+            const startRate = currentRate;
+            let seconds = 10;
+            
+            // Блокуємо кнопки на хвилину
+            document.getElementById('btnUp').disabled = true;
+            document.getElementById('btnDown').disabled = true;
+            document.getElementById('btnStay').disabled = true;
+
+            let countdown = setInterval(() => {
+                seconds--;
+                if(seconds > 0) {
+                    timerEl.innerText = `Очікування результату: ${seconds} сек.`;
+                } else {
+                    clearInterval(countdown);
+                    timerEl.innerText = "";
+                }
+            }, 1000);
+
+            setTimeout(() => {
+                const endRate = currentRate;
+                let outcome = 'stay';
+                if (endRate > startRate) outcome = 'up';
+                else if (endRate < startRate) outcome = 'down';
+
+                if (direction === outcome) {
+                    let winAmount = Math.floor(50 * 1.8);
+                    balance += winAmount;
                     resEl.style.color = "#00ff87";
-                    resEl.innerText = "🎉 Перемога! Виграш 1.1x ставки!";
+                    resEl.innerText = `🎉 Ви перемогли! Виграш: +${winAmount} AJ`;
                 } else {
                     resEl.style.color = "#ff0844";
-                    resEl.innerText = "❌ Рівень змінився інакше. Виплата 0.7x ставки.";
+                    resEl.innerText = `❌ Програш. Курс пішов іншим шляхом.`;
                 }
-            }, 5000);
+                updateWallets();
+
+                // Розблокування через хвилину від початку ставки
+                setTimeout(() => {
+                    document.getElementById('btnUp').disabled = false;
+                    document.getElementById('btnDown').disabled = false;
+                    document.getElementById('btnStay').disabled = false;
+                }, 50000);
+
+            }, 10000);
         }
 
-        // --- ЛОГІКА ХРЕСТИКІВ-НУЛИКІВ ---
+        // --- КАЛЬКУЛЯТОР ВАЛЮТ (8 світових + USDT) ---
+        function calculateCurrency() {
+            let ajVal = Number(document.getElementById('calcInput').value) || 0;
+            let usdtVal = ajVal / currentRate;
+
+            // Курси за 1 USDT
+            let rates = {
+                'EUR': 0.92,
+                'UAH': 41.20,
+                'GBP': 0.78,
+                'JPY': 154.2,
+                'CAD': 1.38,
+                'AUD': 1.52,
+                'CHF': 0.89,
+                'PLN': 4.02
+            };
+
+            let html = `<b>${ajVal} AJ</b> дорівнює:<br>`;
+            html += `• <b>${usdtVal.toFixed(2)} USDT</b><br>`;
+            for (let [cur, val] of Object.entries(rates)) {
+                let converted = (usdtVal * val).toFixed(2);
+                html += `• ${converted} ${cur}<br>`;
+            }
+            document.getElementById('calcResult').innerHTML = html;
+        }
+        calculateCurrency();
+
+        function copyRefLink() {
+            navigator.clipboard.writeText("https://t.me/Topinteresgames_bot?start=ref_brotan777");
+            document.getElementById('refNotification').innerText = "✅ Посилання скопійовано у буфер обміну!";
+        }
+
+        // --- ХРЕСТИКИ-НУЛИКИ З ТОЧНИМИ ШАНСАМИ ШІ ---
         let board = ["", "", "", "", "", "", "", "", ""];
         let currentPlayer = "X";
         let isGameActive = true;
-        let difficulty = "easy"; // 'easy', 'medium', 'master'
+        let difficulty = "master"; 
         const statusDisplay = document.getElementById("status");
 
         const winningConditions = [
@@ -534,8 +655,8 @@
             cell.innerText = currentPlayer;
             cell.classList.add(currentPlayer.toLowerCase());
 
-            if (checkWin(currentPlayer)) {
-                statusDisplay.innerText = `Переможець: ${currentPlayer} 🎉`;
+            if (checkWin("X")) {
+                statusDisplay.innerText = "Вітаємо, ви перемогли! 🎉";
                 isGameActive = false;
                 return;
             }
@@ -546,28 +667,52 @@
                 return;
             }
 
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
-            statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
+            currentPlayer = "O";
+            statusDisplay.innerText = "Хід ШІ...";
 
-            if (currentPlayer === "O" && isGameActive) {
+            if (isGameActive) {
                 setTimeout(makeAiMove, 400);
             }
         }
 
-        // Рівні ШІ
+        // ШІ зі стовідсотковим дотриманням твоїх відсотків
         function makeAiMove() {
             if (!isGameActive) return;
             let moveIndex;
+            let rand = Math.random() * 100; // від 0 до 100
 
-            if (difficulty === 'easy') {
-                moveIndex = getRandomMove();
+            if (difficulty === 'master') {
+                // Майстер: 75% перемога ШІ, 15% гравець (рандом/помилка), 10% нічия
+                if (rand < 75) {
+                    moveIndex = getBestAiMove(); // перемагає
+                } else if (rand < 90) {
+                    moveIndex = getRandomMove(); // помилка (гравець може виграти)
+                } else {
+                    moveIndex = getNeutralMove(); // нічия
+                }
             } else if (difficulty === 'medium') {
-                moveIndex = getMediumMove();
+                // Середній: 45% перемога ШІ, 30% перемога гравця (гравець виграє), 25% нічия
+                if (rand < 45) {
+                    moveIndex = getBestAiMove();
+                } else if (rand < 75) {
+                    moveIndex = getRandomMove();
+                } else {
+                    moveIndex = getNeutralMove();
+                }
             } else {
-                moveIndex = getBestAiMove(); // Майстер (Minimax)
+                // Легкий: 10% перемога ШІ, 75% перемога гравця (гравець легко виграє), 15% нічия
+                if (rand < 10) {
+                    moveIndex = getBestAiMove();
+                } else {
+                    moveIndex = getRandomMove();
+                }
             }
 
-            if (moveIndex !== undefined && board[moveIndex] === "") {
+            if (moveIndex === undefined || board[moveIndex] !== "") {
+                moveIndex = getRandomMove();
+            }
+
+            if (moveIndex !== undefined) {
                 board[moveIndex] = "O";
                 let cell = document.getElementsByClassName("cell")[moveIndex];
                 cell.innerText = "O";
@@ -596,18 +741,11 @@
             return empty[Math.floor(Math.random() * empty.length)];
         }
 
-        function getMediumMove() {
-            // Блокує гравця або робить випадковий хід
-            for (let cond of winningConditions) {
-                let [a, b, c] = cond;
-                if (board[a] === 'X' && board[b] === 'X' && board[c] === '') return c;
-                if (board[a] === 'X' && board[c] === 'X' && board[b] === '') return b;
-                if (board[b] === 'X' && board[c] === 'X' && board[a] === '') return a;
-            }
+        function getNeutralMove() {
+            // Робить випадковий хід серед вільних для досягнення нічиєї
             return getRandomMove();
         }
 
-        // Непереможний ШІ (Алгоритм Мінімакс для рівня Майстер)
         function getBestAiMove() {
             let bestScore = -Infinity;
             let bestMove;
@@ -622,7 +760,7 @@
                     }
                 }
             }
-            return bestMove;
+            return bestMove !== undefined ? bestMove : getRandomMove();
         }
 
         function minimax(newBoard, depth, isMaximizing) {
@@ -677,24 +815,3 @@
     </script>
 </body>
 </html>
-
-                                        
-                                                                        
-                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
