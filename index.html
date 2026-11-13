@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popular Games - Хрестики-Нулики</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f4068, #162447);
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #e43f5a;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #c7cee3;
+        }
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 350px;
+            margin: 20px auto;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .cell {
+            background-color: #0f3460;
+            border: none;
+            border-radius: 10px;
+            font-size: 2.5rem;
+            color: #ffffff;
+            height: 80px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cell:hover {
+            background-color: #e43f5a;
+        }
+        .btn {
+            background-color: #e43f5a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #ff477e;
+        }
+        #status {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 Popular Games</h1>
+    <p>Ігровий міні-додаток у Telegram</p>
+
+    <div class="game-card">
+        <h2>Хрестики-Нулики</h2>
+        <div id="status">Хід гравця: X</div>
+        <div class="board" id="board">
+            <button class="cell" onclick="makeMove(0)"></button>
+            <button class="cell" onclick="makeMove(1)"></button>
+            <button class="cell" onclick="makeMove(2)"></button>
+            <button class="cell" onclick="makeMove(3)"></button>
+            <button class="cell" onclick="makeMove(4)"></button>
+            <button class="cell" onclick="makeMove(5)"></button>
+            <button class="cell" onclick="makeMove(6)"></button>
+            <button class="cell" onclick="makeMove(7)"></button>
+            <button class="cell" onclick="makeMove(8)"></button>
+        </div>
+        <button class="btn" onclick="resetGame()">Схемка / Перезапустити</button>
+    </div>
+
+    <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let isGameActive = true;
+        const statusDisplay = document.getElementById("status");
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function makeMove(index) {
+            if (board[index] !== "" || !isGameActive) return;
+
+            board[index] = currentPlayer;
+            document.getElementsByClassName("cell")[index].innerText = currentPlayer;
+
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            for (let i = 0; i < winningConditions.length; i++) {
+                let [a, b, c] = winningConditions[i];
+                if (board[a] === "" || board[b] === "" || board[c] === "") continue;
+                if (board[a] === board[b] && board[b] === board[c]) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                statusDisplay.innerText = `Переможець: ${currentPlayer} 🎉`;
+                isGameActive = false;
+                return;
+            }
+
+            if (!board.includes("")) {
+                statusDisplay.innerText = "Нічия! 🤝";
+                isGameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
+        }
+
+        function resetGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            isGameActive = true;
+            currentPlayer = "X";
+            statusDisplay.innerText = `Хід гравця: ${currentPlayer}`;
+            let cells = document.getElementsByClassName("cell");
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].innerText = "";
+            }
+        }
+    </script>
+
+</body>
+</html>
