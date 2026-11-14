@@ -13,7 +13,6 @@
             --accent-crypto: #00ff87;
             --text-main: #f0f6fc;
             --text-muted: #8b949e;
-            --border-glow: rgba(0, 242, 254, 0.2);
         }
 
         body {
@@ -67,6 +66,7 @@
             flex-direction: column;
             align-items: center;
             margin: auto;
+            padding-bottom: 80px;
         }
 
         .screen {
@@ -150,7 +150,6 @@
             margin-bottom: 15px;
         }
 
-        /* Гаманець */
         .wallet-banner {
             background: linear-gradient(135deg, rgba(0,255,135,0.15), rgba(0,242,254,0.15));
             border: 1px solid var(--accent-crypto);
@@ -158,6 +157,8 @@
             padding: 15px;
             text-align: center;
             margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .wallet-balance {
@@ -220,24 +221,55 @@
         .bet-stay { background: rgba(255, 204, 0, 0.2); color: #ffcc00; border: 1px solid #ffcc00; grid-column: span 2; }
         .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Калькулятор */
-        .calc-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
+        /* Калькулятор та обмінник */
+        .calc-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .calc-input, .calc-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px;
+            border-radius: 12px;
             color: var(--text-main);
             font-size: 1rem;
             box-sizing: border-box;
-            margin-top: 8px;
             outline: none;
         }
 
-        .calc-result {
+        .calc-input {
+            flex: 2;
+            width: 100%;
+        }
+
+        .calc-select {
+            flex: 1;
+            background-color: #161d2e;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .calc-result-box {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--accent-x);
+        }
+
+        .converted-wallet {
             margin-top: 10px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            padding: 10px;
+            border-radius: 10px;
             line-height: 1.5;
         }
 
@@ -281,8 +313,18 @@
         #status {
             text-align: center;
             font-size: 0.95rem;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: 600;
+        }
+
+        .chances-info {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px;
+            border-radius: 8px;
         }
 
         .board {
@@ -325,6 +367,12 @@
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -359,8 +407,8 @@
                 <button class="menu-card-btn" onclick="showScreen('cryptoScreen')">
                     <div class="menu-icon">💠</div>
                     <div>
-                        <div>Валюта Айбек & Гаманець</div>
-                        <small style="color: var(--text-muted); font-weight: normal;">Курс, ставки та калькулятор</small>
+                        <div>Валюта Айбек & Обмінник</div>
+                        <small style="color: var(--text-muted); font-weight: normal;">Курс, ставки та переказ валют</small>
                     </div>
                 </button>
                 <button class="menu-card-btn" onclick="showScreen('refScreen')">
@@ -382,30 +430,31 @@
 
             <div class="card">
                 <div class="selectors-row">
-                    <button class="sel-btn active" id="diffEasy" onclick="setDifficulty('easy')">Легкий</button>
+                    <button class="sel-btn" id="diffEasy" onclick="setDifficulty('easy')">Легкий</button>
                     <button class="sel-btn" id="diffMedium" onclick="setDifficulty('medium')">Середній</button>
-                    <button class="sel-btn" id="diffMaster" onclick="setDifficulty('master')">Майстер 🤖</button>
+                    <button class="sel-btn active" id="diffMaster" onclick="setDifficulty('master')">Майстер 🤖</button>
                 </div>
 
+                <div class="chances-info" id="chancesInfo">Шанси: ШІ 75% | Ви 15% | Нічия 10%</div>
                 <div id="status">Хід гравця: X</div>
                 
                 <div class="board" id="board">
-                    <button class="cell" onclick="makeMove(0)"></button>
-                    <button class="cell" onclick="makeMove(1)"></button>
-                    <button class="cell" onclick="makeMove(2)"></button>
-                    <button class="cell" onclick="makeMove(3)"></button>
-                    <button class="cell" onclick="makeMove(4)"></button>
-                    <button class="cell" onclick="makeMove(5)"></button>
-                    <button class="cell" onclick="makeMove(6)"></button>
-                    <button class="cell" onclick="makeMove(7)"></button>
-                    <button class="cell" onclick="makeMove(8)"></button>
+                    <div class="cell" onclick="makeMove(0)"></div>
+                    <div class="cell" onclick="makeMove(1)"></div>
+                    <div class="cell" onclick="makeMove(2)"></div>
+                    <div class="cell" onclick="makeMove(3)"></div>
+                    <div class="cell" onclick="makeMove(4)"></div>
+                    <div class="cell" onclick="makeMove(5)"></div>
+                    <div class="cell" onclick="makeMove(6)"></div>
+                    <div class="cell" onclick="makeMove(7)"></div>
+                    <div class="cell" onclick="makeMove(8)"></div>
                 </div>
 
                 <button class="action-btn" onclick="resetGame()">Нова гра</button>
             </div>
         </div>
 
-        <!-- БІРЖА ТА КАЛЬКУЛЯТОР -->
+        <!-- БІРЖА, КАЛЬКУЛЯТОР ТА ОБМІННИК -->
         <div id="cryptoScreen" class="screen">
             <div class="app-header">
                 <h1>Aibek Market</h1>
@@ -415,6 +464,39 @@
             <div class="card" style="border-color: var(--accent-crypto);">
                 <div style="font-size: 0.9rem; font-weight: 700; margin-bottom: 5px;">💳 Ваш гаманець:</div>
                 <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-crypto);" id="cryptoWalletBalance">500 AJ</div>
+                <div class="converted-wallet" id="otherCurrenciesWallet">
+                    Інші валюти: порожньо
+                </div>
+            </div>
+
+            <!-- Калькулятор та переказ -->
+            <div class="card">
+                <div style="font-weight: 700; font-size: 1rem; margin-bottom: 5px;">🧮 Калькулятор та обмін AJ:</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Оберіть суму Айбеків та потрібну валюту:</div>
+                
+                <div class="calc-row">
+                    <input type="number" id="calcInput" class="calc-input" value="100" min="1" placeholder="Сума AJ" oninput="calculateCurrency()">
+                    <select id="currencySelect" class="calc-select" onchange="calculateCurrency()">
+                        <option value="USDT">USDT</option>
+                        <option value="UAH">UAH (₴)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="PLN">PLN (zł)</option>
+                        <option value="JPY">JPY (¥)</option>
+                        <option value="CAD">CAD ($)</option>
+                        <option value="AUD">AUD ($)</option>
+                        <option value="CHF">CHF</option>
+                    </select>
+                </div>
+
+                <div class="calc-result-box" id="calcResultBox">
+                    100 AJ = 26.53 USDT
+                </div>
+
+                <button class="action-btn" style="background: linear-gradient(135deg, var(--accent-crypto), #00f2fe);" onclick="convertAibekToCurrency()">
+                    🔄 Перевести AJ у вибрану валюту
+                </button>
+                <div id="convertStatus" style="text-align: center; font-size: 0.8rem; margin-top: 8px; font-weight: 600;"></div>
             </div>
 
             <div class="card">
@@ -434,16 +516,6 @@
                 </div>
                 <div id="betTimer" style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;"></div>
                 <div id="betResult" style="text-align: center; font-size: 0.85rem; margin-top: 8px; font-weight: 600;"></div>
-            </div>
-
-            <!-- Калькулятор -->
-            <div class="card">
-                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">🧮 Калькулятор валют:</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted);">Введіть кількість AJ для конвертації:</div>
-                <input type="number" id="calcInput" class="calc-input" value="100" oninput="calculateCurrency()">
-                <div class="calc-result" id="calcResult">
-                    <!-- Заповнюється скриптом -->
-                </div>
             </div>
         </div>
 
@@ -471,17 +543,18 @@
         // --- ІНІЦІАЛІЗАЦІЯ БАЛАНСУ ---
         let balance = localStorage.getItem('aibek_balance');
         if (balance === null) {
-            balance = 500; // Початковий баланс новичка
+            balance = 500;
             localStorage.setItem('aibek_balance', balance);
         } else {
             balance = Number(balance);
         }
 
-        // Перевірка реферального посилання 1 раз назавжди
+        let extraWallets = JSON.parse(localStorage.getItem('extra_wallets') || '{}');
+
         const urlParams = new URLSearchParams(window.location.search);
         const refParam = urlParams.get('ref');
         if (refParam && !localStorage.getItem('ref_claimed')) {
-            balance += 150; // Бонус тому, хто перейшов
+            balance += 150;
             localStorage.setItem('aibek_balance', balance);
             localStorage.setItem('ref_claimed', 'true');
             alert('Вітаємо! Використано реферальне посилання. Вам нараховано бонус +150 AJ!');
@@ -491,6 +564,15 @@
             document.getElementById('mainWalletBalance').innerText = balance + " AJ";
             document.getElementById('cryptoWalletBalance').innerText = balance + " AJ";
             localStorage.setItem('aibek_balance', balance);
+
+            let entries = Object.entries(extraWallets).filter(([k, v]) => v > 0);
+            if (entries.length === 0) {
+                document.getElementById('otherCurrenciesWallet').innerHTML = "Інші валюти: <b>0</b> (обміняйте AJ нижче)";
+            } else {
+                let list = entries.map(([cur, val]) => `<b>${val.toFixed(2)} ${cur}</b>`).join(" • ");
+                document.getElementById('otherCurrenciesWallet').innerHTML = "Ваші рахунки: " + list;
+            }
+            localStorage.setItem('extra_wallets', JSON.stringify(extraWallets));
             calculateCurrency();
         }
         updateWallets();
@@ -501,12 +583,23 @@
             document.getElementById('backBtn').style.display = screenId === 'menuScreen' ? 'none' : 'flex';
         }
 
-        // --- ЕКОНОМІКА АЙБЕКА (СТАБІЛЬНИЙ КУРС З РІДКІСНИМИ КОЛИВАННЯМИ) ---
+        // --- ЕКОНОМІКА АЙБЕКА ---
         let currentRate = 3.77;
         let lastBetTime = 0;
 
+        const ratesToUSDT = {
+            'USDT': 1.00,
+            'UAH': 41.20,
+            'EUR': 0.92,
+            'GBP': 0.78,
+            'PLN': 4.02,
+            'JPY': 154.20,
+            'CAD': 1.38,
+            'AUD': 1.52,
+            'CHF': 0.89
+        };
+
         function updateAibekEconomy() {
-            // Курс більшу частину часу тримається на місці, коливається лише іноді (у 30% випадків)
             if (Math.random() < 0.3) {
                 const delta = (Math.random() * 0.04 - 0.02);
                 currentRate = Math.max(3.0, Number((currentRate + delta).toFixed(2)));
@@ -520,6 +613,7 @@
                     trendEl.innerText = "📉 Курс трохи просів";
                     trendEl.style.color = "#ff0844";
                 }
+                calculateCurrency();
             } else {
                 document.getElementById('aibekTrend').innerText = "💤 Курс стабільний на місці";
                 document.getElementById('aibekTrend').style.color = "var(--text-muted)";
@@ -527,7 +621,45 @@
         }
         setInterval(updateAibekEconomy, 8000);
 
-        // Ставки (1 раз на хвилину)
+        // --- КАЛЬКУЛЯТОР ТА ОБМІН ---
+        function calculateCurrency() {
+            let ajAmount = Number(document.getElementById('calcInput').value) || 0;
+            let selectedCur = document.getElementById('currencySelect').value;
+            let usdtVal = ajAmount / currentRate;
+            let convertedVal = usdtVal * ratesToUSDT[selectedCur];
+
+            document.getElementById('calcResultBox').innerText = `${ajAmount} AJ = ${convertedVal.toFixed(2)} ${selectedCur}`;
+        }
+
+        function convertAibekToCurrency() {
+            let ajAmount = Number(document.getElementById('calcInput').value) || 0;
+            let selectedCur = document.getElementById('currencySelect').value;
+            let statusEl = document.getElementById('convertStatus');
+
+            if (ajAmount <= 0) {
+                statusEl.style.color = "#ff0844";
+                statusEl.innerText = "⚠️ Введіть коректну суму AJ!";
+                return;
+            }
+
+            if (ajAmount > balance) {
+                statusEl.style.color = "#ff0844";
+                statusEl.innerText = "❌ Недостатньо AJ на балансі!";
+                return;
+            }
+
+            let usdtVal = ajAmount / currentRate;
+            let convertedVal = usdtVal * ratesToUSDT[selectedCur];
+
+            balance -= ajAmount;
+            extraWallets[selectedCur] = (extraWallets[selectedCur] || 0) + convertedVal;
+            
+            updateWallets();
+            statusEl.style.color = "#00ff87";
+            statusEl.innerText = `✅ Успішно переведено ${ajAmount} AJ у ${convertedVal.toFixed(2)} ${selectedCur}!`;
+        }
+
+        // --- СТАВКИ ---
         function placeBet(direction) {
             const now = Date.now();
             if (now - lastBetTime < 60000) {
@@ -541,7 +673,7 @@
                 return;
             }
 
-            balance -= 50; // Ставка 50 AJ
+            balance -= 50;
             updateWallets();
             lastBetTime = now;
 
@@ -553,7 +685,6 @@
             const startRate = currentRate;
             let seconds = 10;
             
-            // Блокуємо кнопки на хвилину
             document.getElementById('btnUp').disabled = true;
             document.getElementById('btnDown').disabled = true;
             document.getElementById('btnStay').disabled = true;
@@ -585,7 +716,6 @@
                 }
                 updateWallets();
 
-                // Розблокування через хвилину від початку ставки
                 setTimeout(() => {
                     document.getElementById('btnUp').disabled = false;
                     document.getElementById('btnDown').disabled = false;
@@ -594,33 +724,6 @@
 
             }, 10000);
         }
-
-        // --- КАЛЬКУЛЯТОР ВАЛЮТ (8 світових + USDT) ---
-        function calculateCurrency() {
-            let ajVal = Number(document.getElementById('calcInput').value) || 0;
-            let usdtVal = ajVal / currentRate;
-
-            // Курси за 1 USDT
-            let rates = {
-                'EUR': 0.92,
-                'UAH': 41.20,
-                'GBP': 0.78,
-                'JPY': 154.2,
-                'CAD': 1.38,
-                'AUD': 1.52,
-                'CHF': 0.89,
-                'PLN': 4.02
-            };
-
-            let html = `<b>${ajVal} AJ</b> дорівнює:<br>`;
-            html += `• <b>${usdtVal.toFixed(2)} USDT</b><br>`;
-            for (let [cur, val] of Object.entries(rates)) {
-                let converted = (usdtVal * val).toFixed(2);
-                html += `• ${converted} ${cur}<br>`;
-            }
-            document.getElementById('calcResult').innerHTML = html;
-        }
-        calculateCurrency();
 
         function copyRefLink() {
             navigator.clipboard.writeText("https://t.me/Topinteresgames_bot?start=ref_brotan777");
@@ -633,6 +736,7 @@
         let isGameActive = true;
         let difficulty = "master"; 
         const statusDisplay = document.getElementById("status");
+        const chancesDisplay = document.getElementById("chancesInfo");
 
         const winningConditions = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -644,16 +748,25 @@
             difficulty = level;
             document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('diff' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('active');
+
+            if (level === 'master') {
+                chancesDisplay.innerText = "Шанси: ШІ 75% | Ви 15% | Нічия 10%";
+            } else if (level === 'medium') {
+                chancesDisplay.innerText = "Шанси: ШІ 45% | Ви 30% | Нічия 25%";
+            } else {
+                chancesDisplay.innerText = "Шанси: ШІ 10% | Ви 75% | Нічия 15%";
+            }
+
             resetGame();
         }
 
         function makeMove(index) {
-            if (board[index] !== "" || !isGameActive) return;
+            if (board[index] !== "" || !isGameActive || currentPlayer !== "X") return;
 
-            board[index] = currentPlayer;
+            board[index] = "X";
             let cell = document.getElementsByClassName("cell")[index];
-            cell.innerText = currentPlayer;
-            cell.classList.add(currentPlayer.toLowerCase());
+            cell.innerText = "X";
+            cell.classList.add("x");
 
             if (checkWin("X")) {
                 statusDisplay.innerText = "Вітаємо, ви перемогли! 🎉";
@@ -675,37 +788,22 @@
             }
         }
 
-        // ШІ зі стовідсотковим дотриманням твоїх відсотків
         function makeAiMove() {
             if (!isGameActive) return;
             let moveIndex;
-            let rand = Math.random() * 100; // від 0 до 100
+            let rand = Math.random() * 100;
 
             if (difficulty === 'master') {
-                // Майстер: 75% перемога ШІ, 15% гравець (рандом/помилка), 10% нічия
-                if (rand < 75) {
-                    moveIndex = getBestAiMove(); // перемагає
-                } else if (rand < 90) {
-                    moveIndex = getRandomMove(); // помилка (гравець може виграти)
-                } else {
-                    moveIndex = getNeutralMove(); // нічия
-                }
+                if (rand < 75) moveIndex = getBestAiMove();
+                else if (rand < 90) moveIndex = getRandomMove();
+                else moveIndex = getNeutralMove();
             } else if (difficulty === 'medium') {
-                // Середній: 45% перемога ШІ, 30% перемога гравця (гравець виграє), 25% нічия
-                if (rand < 45) {
-                    moveIndex = getBestAiMove();
-                } else if (rand < 75) {
-                    moveIndex = getRandomMove();
-                } else {
-                    moveIndex = getNeutralMove();
-                }
+                if (rand < 45) moveIndex = getBestAiMove();
+                else if (rand < 75) moveIndex = getRandomMove();
+                else moveIndex = getNeutralMove();
             } else {
-                // Легкий: 10% перемога ШІ, 75% перемога гравця (гравець легко виграє), 15% нічия
-                if (rand < 10) {
-                    moveIndex = getBestAiMove();
-                } else {
-                    moveIndex = getRandomMove();
-                }
+                if (rand < 10) moveIndex = getBestAiMove();
+                else moveIndex = getRandomMove();
             }
 
             if (moveIndex === undefined || board[moveIndex] !== "") {
@@ -742,7 +840,6 @@
         }
 
         function getNeutralMove() {
-            // Робить випадковий хід серед вільних для досягнення нічиєї
             return getRandomMove();
         }
 
