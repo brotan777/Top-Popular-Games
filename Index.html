@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aibek Ecosystem & Global Exchange</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .header-logo {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .logo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 1.4rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+        h1 {
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 4px 0 12px 0;
+            color: var(--accent);
+        }
+        /* Головне меню */
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .menu-btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 14px 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover, .menu-btn.active {
+            border-color: var(--accent);
+            background-color: #334155;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .card.active-tab {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .balance-box {
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            color: var(--success);
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .wallet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+            font-size: 0.9rem;
+        }
+        .wallet-item {
+            display: flex;
+            justify-content: space-between;
+            background: #334155;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        .btn {
+            background-color: var(--accent);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .btn-secondary {
+            background-color: #334155;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            padding: 8px;
+        }
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+        /* Ігрове поле */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .cell {
+            aspect-ratio: 1;
+            background-color: #334155;
+            border: none;
+            border-radius: 8px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .cell:active {
+            background-color: #475569;
+        }
+        .selector, .diff-selector {
+            display: flex;
+            gap: 6px;
+        }
+        .selector button, .diff-selector button {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.9rem;
+            background: #334155;
+            color: white;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .selector button.selected, .diff-selector button.selected {
+            border-color: var(--accent);
+            background: #1e293b;
+        }
+        input, select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .status {
+            text-align: center;
+            font-size: 0.95rem;
+            min-height: 22px;
+            font-weight: 500;
+        }
+        .rate-card {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .simulation-panel {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Логотип Айбек -->
+        <div class="header-logo">
+            <div class="logo-badge">💎 AIBEK</div>
+        </div>
+        <h1>Глобальна екосистема</h1>
+
+        <!-- Головне меню -->
+        <div class="main-menu">
+            <button class="menu-btn active" onclick="switchTab('game', this)">❌ Хрестики-Нулики</button>
+            <button class="menu-btn" onclick="switchTab('wallet', this)">💰 Гаманець</button>
+            <button class="menu-btn" onclick="switchTab('exchange', this)">📈 Біржа та Курс</button>
+            <button class="menu-btn" onclick="switchTab('referral', this)">🎁 Реферали</button>
+        </div>
+
+        <!-- 1. РОЗДІЛ: Хрестики-нулики -->
+        <div id="tab-game" class="card active-tab">
+            <h2 style="font-size: 1.1rem; margin:0; text-align:center;">Дуель проти ШІ</h2>
+            
+            <div style="font-size: 0.85rem; color:#94a3b8; text-align:center;">Оберіть фігуру:</div>
+            <div class="selector">
+                <button id="btnX" class="selected" onclick="chooseSymbol('X')">❌ Хрестик</button>
+                <button id="btnO" onclick="chooseSymbol('O')">⭕ Нолик</button>
+            </div>
+
+            <div style="font-size: 0.85rem; color:#94a3b8; text-align:center;">Рівень складності:</div>
+            <div class="diff-selector">
+                <button id="diffEasy" class="selected" onclick="setDifficulty('easy')">Легкий</button>
+                <button id="diffNormal" onclick="setDifficulty('normal')">Нормальний</button>
+                <button id="diffHard" onclick="setDifficulty('hard')">Швидкий ШІ</button>
+            </div>
+
+            <button class="btn" onclick="startGame()">Розпочати гру</button>
+            <div class="status" id="gameStatus">Натисніть «Розпочати гру»</div>
+            
+            <div class="board" id="board">
+                <button class="cell" onclick="makeMove(0)"></button>
+                <button class="cell" onclick="makeMove(1)"></button>
+                <button class="cell" onclick="makeMove(2)"></button>
+                <button class="cell" onclick="makeMove(3)"></button>
+                <button class="cell" onclick="makeMove(4)"></button>
+                <button class="cell" onclick="makeMove(5)"></button>
+                <button class="cell" onclick="makeMove(6)"></button>
+                <button class="cell" onclick="makeMove(7)"></button>
+                <button class="cell" onclick="makeMove(8)"></button>
+            </div>
+        </div>
+
+        <!-- 2. РОЗДІЛ: Гаманець -->
+        <div id="tab-wallet" class="card">
+            <h2 style="font-size: 1.1rem; margin:0; text-align:center;">Ваш портфель</h2>
+            <div class="balance-box">AJ Баланс: <span id="balance">500</span> AJ</div>
+            <div style="font-size: 0.9rem; font-weight: bold; margin-top: 4px;">Валютні депозити світу:</div>
+            <div class="wallet-list" id="walletList">
+                <div class="wallet-item"><span>AJ (Айбек-койн):</span> <span>500 AJ</span></div>
+                <div class="wallet-item" style="color: #64748b;"><span>Інші валюти:</span><span>0.00</span></div>
+            </div>
+        </div>
+
+        <!-- 3. РОЗДІЛ: Обмін та Світові курси -->
+        <div id="tab-exchange" class="card">
+            <h2 style="font-size: 1.1rem; margin:0; text-align:center;">Біржа світових валют</h2>
+            
+            <div class="rate-card" id="globalRatesCard">
+                <div>💎 <b>1 AJ = <span id="currentAibekUSD">3.77</span> USD ($)</b></div>
+                <div id="statusTrend" style="color: var(--success); font-weight: bold;">📈 Курс стабільний / росте</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;" id="rateDateInfo">Час перевірки: Сьогодні</div>
+            </div>
+
+            <!-- Симуляція подій для керування курсом -->
+            <div style="font-size: 0.85rem; color: #94a3b8;">Симуляція активності ринку:</div>
+            <div class="simulation-panel">
+                <button class="btn btn-secondary" onclick="simulateEvent('new_user')">👤 Новий юзер</button>
+                <button class="btn btn-secondary" onclick="simulateEvent('active_user')">🔥 Активний</button>
+                <button class="btn btn-secondary" onclick="simulateEvent('refs')">🎁 Реферали</button>
+            </div>
+            <div class="simulation-panel">
+                <button class="btn btn-secondary" onclick="simulateEvent('donate')">💎 Донат</button>
+                <button class="btn btn-secondary" onclick="simulateEvent('leave')">❌ Хтось вийшов</button>
+                <button class="btn btn-secondary" onclick="simulateEvent('calm')">⚖️ Тихо</button>
+            </div>
+
+            <label for="amount" style="font-size: 0.9rem; margin-top: 4px;">Сума в AJ для обміну:</label>
+            <input type="number" id="amount" value="50" min="1">
+            
+            <label for="currency" style="font-size: 0.9rem;">Оберіть світову валюту:</label>
+            <select id="currency">
+                <option value="USDT">USDT (Долар США)</option>
+                <option value="UAH">UAH (Українська гривня)</option>
+                <option value="EUR">EUR (Євро)</option>
+                <option value="GBP">GBP (Британський фунт)</option>
+                <option value="PLN">PLN (Польський злотий)</option>
+                <option value="JPY">JPY (Японська єна)</option>
+                <option value="CAD">CAD (Канадський долар)</option>
+                <option value="AUD">AUD (Австралійський долар)</option>
+                <option value="CHF">CHF (Швейцарський франк)</option>
+            </select>
+
+            <button class="btn" onclick="exchangeCurrency()">Обміняти у світову валюту</button>
+            <div class="status" id="exchangeResult"></div>
+        </div>
+
+        <!-- 4. РОЗДІЛ: Реферали -->
+        <div id="tab-referral" class="card">
+            <h2 style="font-size: 1.1rem; margin:0; text-align:center;">Реферальна програма</h2>
+            <p style="font-size: 0.9rem; text-align:center; color:#94a3b8; margin:0;">Запрошуйте друзів: кожен новий друг піднімає курс Айбека на **+1.5** і приносить вам **+100 AJ**!</p>
+            <div class="wallet-box" style="background:#0f172a; padding:10px; border-radius:8px; text-align:center; font-size:0.85rem; word-break:break-all;" id="refLink">https://t.me/Topinteresgames_bot?start=ref_8372</div>
+            <button class="btn" onclick="copyRefLink()">Скопіювати посилання</button>
+            <div class="status" id="refStatus" style="font-size:0.85rem; color:var(--success);"></div>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let balance = 500;
+        let foreignWallets = {};
+        let playerSymbol = 'X';
+        let aiSymbol = 'O';
+        let difficulty = 'easy';
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = false;
+        let isPlayerTurn = true;
+
+        // Базовий курс Айбека в доларах США ($)
+        let aibekUSD = 3.77;
+
+        // Коефіцієнти конвертації з USD в інші світові валюти (без рублів)
+        const worldRatesToUSD = {
+            USDT: 1.0,
+            UAH: 41.5,
+            EUR: 0.92,
+            GBP: 0.78,
+            PLN: 4.05,
+            JPY: 155.0,
+            CAD: 1.38,
+            AUD: 1.52,
+            CHF: 0.89
+        };
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('active-tab'));
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active-tab');
+            btnElement.classList.add('active');
+        }
+
+        function chooseSymbol(symbol) {
+            playerSymbol = symbol;
+            aiSymbol = symbol === 'X' ? 'O' : 'X';
+            document.getElementById('btnX').classList.toggle('selected', symbol === 'X');
+            document.getElementById('btnO').classList.toggle('selected', symbol === 'O');
+        }
+
+        function setDifficulty(level) {
+            difficulty = level;
+            document.getElementById('diffEasy').classList.toggle('selected', level === 'easy');
+            document.getElementById('diffNormal').classList.toggle('selected', level === 'normal');
+            document.getElementById('diffHard').classList.toggle('selected', level === 'hard');
+        }
+
+        function startGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            isPlayerTurn = (playerSymbol === 'X');
+            updateBoardUI();
+            
+            if (!isPlayerTurn) {
+                document.getElementById('gameStatus').innerText = "ШІ ходить першим...";
+                setTimeout(aiMove, 600);
+            } else {
+                document.getElementById('gameStatus').innerText = "Ваш хід!";
+            }
+        }
+
+        function makeMove(index) {
+            if (!gameActive || !isPlayerTurn || board[index] !== '') return;
+
+            board[index] = playerSymbol;
+            updateBoardUI();
+
+            if (checkWin(playerSymbol)) {
+                endGame(true, "Перемога! Виграно +50 AJ 🎉");
+                balance += 50;
+                // Перемога гравця розцінюється як активність -> курс трохи росте (+0.2)
+                updateAibekRate(0.2, "📈 Перемога в грі! Курс росте!");
+                updateBalanceAndWallet();
+                return;
+            }
+
+            if (board.every(cell => cell !== '')) {
+                endGame(false, "Нічия! Рівна гра 🤝");
+                return;
+            }
+
+            isPlayerTurn = false;
+            document.getElementById('gameStatus').innerText = "ШІ думає...";
+            setTimeout(aiMove, 700);
+        }
+
+        function aiMove() {
+            if (!gameActive) return;
+
+            let emptyCells = [];
+            board.forEach((val, idx) => {
+                if (val === '') emptyCells.push(idx);
+            });
+
+            if (emptyCells.length === 0) return;
+
+            let chosenCell;
+            if (difficulty === 'easy') {
+                chosenCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            } else if (difficulty === 'normal') {
+                let smartMove = findBestOrBlockMove();
+                if (smartMove !== null && Math.random() < 0.6) {
+                    chosenCell = smartMove;
+                } else {
+                    chosenCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                }
+            } else {
+                let smartMove = findBestOrBlockMove();
+                chosenCell = smartMove !== null ? smartMove : emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            }
+
+            board[chosenCell] = aiSymbol;
+            updateBoardUI();
+
+            if (checkWin(aiSymbol)) {
+                endGame(false, "ШІ переміг! Спробуйте ще раз 💪");
+                return;
+            }
+
+            if (board.every(cell => cell !== '')) {
+                endGame(false, "Нічия!");
+                return;
+            }
+
+            isPlayerTurn = true;
+            document.getElementById('gameStatus').innerText = "Ваш хід!";
+        }
+
+        function findBestOrBlockMove() {
+            let emptyCells = [];
+            board.forEach((val, idx) => {
+                if (val === '') emptyCells.push(idx);
+            });
+
+            for (let cell of emptyCells) {
+                board[cell] = aiSymbol;
+                if (checkWin(aiSymbol)) {
+                    board[cell] = '';
+                    return cell;
+                }
+                board[cell] = '';
+            }
+
+            for (let cell of emptyCells) {
+                board[cell] = playerSymbol;
+                if (checkWin(playerSymbol)) {
+                    board[cell] = '';
+                    return cell;
+                }
+                board[cell] = '';
+            }
+
+            return null;
+        }
+
+        function checkWin(symbol) {
+            const winCombos = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            return winCombos.some(combo => combo.every(idx => board[idx] === symbol));
+        }
+
+        function endGame(won, message) {
+            gameActive = false;
+            document.getElementById('gameStatus').innerText = message;
+        }
+
+        function updateBoardUI() {
+            let cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].innerText = board[i];
+            }
+        }
+
+        function updateBalanceAndWallet() {
+            document.getElementById('balance').innerText = balance;
+            let listHTML = `<div class="wallet-item"><span>AJ (Айбек-койн):</span> <span>${balance} AJ</span></div>`;
+            
+            let hasForeign = false;
+            for (let curr in foreignWallets) {
+                if (foreignWallets[curr] > 0) {
+                    hasForeign = true;
+                    listHTML += `<div class="wallet-item"><span>Депозит (${curr}):</span> <span>${foreignWallets[curr].toFixed(2)} ${curr}</span></div>`;
+                }
+            }
+            if (!hasForeign) {
+                listHTML += `<div class="wallet-item" style="color: #64748b;"><span>Інші світові валюти:</span><span>0.00</span></div>`;
+            }
+            document.getElementById('walletList').innerHTML = listHTML;
+        }
+
+        // Керування зміною курсу Айбека за твоїми правилами
+        function updateAibekRate(delta, reasonText) {
+            aibekUSD += delta;
+            if (aibekUSD < 0.10) aibekUSD = 0.10; // Захист від падіння нижче плінтуса
+            aibekUSD = Math.round(aibekUSD * 100) / 100;
+
+            document.getElementById('c
