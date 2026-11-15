@@ -528,4 +528,78 @@
             if (aibekUSD < 0.10) aibekUSD = 0.10; // Захист від падіння нижче плінтуса
             aibekUSD = Math.round(aibekUSD * 100) / 100;
 
-            document.getElementById('c
+            document.getElementById('currentAibekUSD').innerText = aibekUSD.toFixed(2);
+            let trendElem = document.getElementById('statusTrend');
+            
+            if (delta > 0) {
+                trendElem.style.color = "var(--success)";
+                trendElem.innerText = reasonText;
+            } else if (delta < 0) {
+                trendElem.style.color = "var(--danger)";
+                trendElem.innerText = reasonText;
+            } else {
+                trendElem.style.color = "var(--warning)";
+                trendElem.innerText = reasonText;
+            }
+        }
+
+        // Симуляція подій ринку
+        function simulateEvent(type) {
+            if (type === 'new_user') {
+                updateAibekRate(0.05, "📈 Новий гравець долучився до бота (+0.05$)");
+            } else if (type === 'active_user') {
+                updateAibekRate(0.20, "🔥 Гравець активний у екосистемі (+0.20$)");
+            } else if (type === 'refs') {
+                updateAibekRate(1.50, "🎁 Запрошено багато друзів! Потужний ріст (+1.50$)");
+            } else if (type === 'donate') {
+                updateAibekRate(0, "📊 Курс тримається на місці (Отримано донат / покупка послуги)");
+            } else if (type === 'leave') {
+                updateAibekRate(-0.10, "📉 Користувач видалив бота. Курс просів (-0.10$)");
+            } else if (type === 'calm') {
+                updateAibekRate(0, "📊 Стабільний час: активність відсутня, курс на місці.");
+            }
+        }
+
+        function exchangeCurrency() {
+            let amount = parseFloat(document.getElementById('amount').value);
+            let currency = document.getElementById('currency').value;
+            let resultDiv = document.getElementById('exchangeResult');
+
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.style.color = "var(--danger)";
+                resultDiv.innerText = "Введіть коректну суму!";
+                return;
+            }
+
+            if (amount > balance) {
+                resultDiv.style.color = "var(--danger)";
+                resultDiv.innerText = "Недостатньо AJ на балансі!";
+                return;
+            }
+
+            balance -= amount;
+            
+            // Конвертація: AJ -> USD -> Світова валюта
+            let amountInUSD = amount * aibekUSD;
+            let converted = amountInUSD * worldRatesToUSD[currency];
+
+            if (!foreignWallets[currency]) {
+                foreignWallets[currency] = 0;
+            }
+            foreignWallets[currency] += converted;
+
+            updateBalanceAndWallet();
+
+            resultDiv.style.color = "var(--success)";
+            resultDiv.innerText = `Успішно обміняно! Додано +${converted.toFixed(2)} ${currency} до гаманця.`;
+        }
+
+        function copyRefLink() {
+            let linkText = document.getElementById('refLink').innerText;
+            navigator.clipboard.writeText(linkText).then(() => {
+                document.getElementById('refStatus').innerText = "Посилання успішно скопійовано!";
+            });
+        }
+    </script>
+</body>
+</html>
